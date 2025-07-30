@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "apps.climate",
     # 3th party
     "rest_framework",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -140,9 +141,10 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "5/minute",
+        "anon": "50/minute",
         "user": "10/minute",
     },
+     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 CACHES = {

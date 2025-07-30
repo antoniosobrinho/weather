@@ -1,3 +1,4 @@
+from posixpath import abspath
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework.viewsets import ViewSet
@@ -10,12 +11,16 @@ from apps.climate.api.serializers.weather_query_serializer import (
 from apps.climate.services.weather_service import WeatherService
 from apps.climate.api.serializers.weather_serializer import WeatherSerializer
 from apps.climate.decorators import log_weather_query
+from apps.swagger import extend_schema_from_yaml
 
 
 
 class WeatherViewSet(ViewSet):
     @method_decorator(log_weather_query)
     @method_decorator(cache_page(60 * 10))
+    @extend_schema_from_yaml(
+        abspath("weather_app/apps/climate/api/swagger/city_weather/get.yaml"),
+    )
     def list(self, request):
         weather_query_serializer = WeatherQuerySerializer(data=request.query_params)
         if not weather_query_serializer.is_valid():
