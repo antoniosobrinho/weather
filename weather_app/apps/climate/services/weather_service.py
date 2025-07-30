@@ -1,10 +1,13 @@
 from typing import Optional
 
 from apps.climate.dtos.coordinates_dto import CoordinatesDTO
+from apps.climate.dtos.weather_dto import WeatherDTO
 from apps.climate.services.open_weather_map_service import (
     OpenWeatherMapService,
 )
+
 import unicodedata
+
 
 
 class WeatherService:
@@ -28,7 +31,7 @@ class WeatherService:
 
         return
 
-    def get_current_weather(self, city:str, state:str, country:str) -> Optional[dict]:
+    def get_current_weather(self, city:str, state:str, country:str) -> Optional[WeatherDTO]:
         city_coordinates = self.get_city_coordinates(city, state, country)
 
         if not city_coordinates:

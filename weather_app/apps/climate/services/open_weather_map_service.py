@@ -2,6 +2,7 @@ from django.conf import settings
 import requests
 
 from apps.climate.dtos.coordinates_dto import CoordinatesDTO
+from apps.climate.dtos.weather_dto import WeatherDTO, WeatherDescriptionDTO
 
 
 class OpenWeatherMapService:
@@ -16,7 +17,7 @@ class OpenWeatherMapService:
 
         return cities.json()
 
-    def get_weather_by_coordinates(self, coordinates: CoordinatesDTO) -> dict:
+    def get_weather_by_coordinates(self, coordinates: CoordinatesDTO) -> WeatherDTO:
         params = {
             "lat": coordinates.lat,
             "lon": coordinates.lon,
@@ -25,6 +26,9 @@ class OpenWeatherMapService:
         }
         weather_request = requests.get(self.host + "/data/3.0/onecall", params=params)
 
-        weather = weather_request.json()
+        weather_response = weather_request.json()["current"]
 
-        return weather["current"]
+        weather_descriptions = [WeatherDescriptionDTO(**w) for w in weather_response["weather"]]
+        weather_dto = WeatherDTO(**{**weather_response, "weather": weather_descriptions})
+
+        return weather_dto
