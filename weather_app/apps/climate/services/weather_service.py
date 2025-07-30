@@ -17,6 +17,15 @@ class WeatherService:
     def get_city_coordinates(self, city_name: str, state: str, country: str) -> Optional[CoordinatesDTO]:
         cities = self.weather_api_service.get_cities_by_name(city_name)
 
+        city = self.__get_matched_city(cities, state, country)
+
+        if not city:
+            return
+
+        coordinates = CoordinatesDTO(lat=city["lat"], lon=city["lon"])
+        return coordinates
+
+    def __get_matched_city(self, cities:list, state:str, country:str) -> Optional[dict]:
         state = self.__remove_accents(state.lower())
         country = country.lower()
 
@@ -26,8 +35,7 @@ class WeatherService:
                 state_city == state
                 and city.get("country", "").lower() == country
             ):
-                coordinates = CoordinatesDTO(lat=city["lat"], lon=city["lon"])
-                return coordinates
+                return city
 
         return
 
