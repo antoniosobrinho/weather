@@ -9,14 +9,19 @@ from apps.climate.api.serializers.weather_query_serializer import (
 )
 from apps.climate.services.weather_service import WeatherService
 from apps.climate.api.serializers.weather_serializer import WeatherSerializer
+from apps.climate.decorators import log_weather_query
+
 
 
 class WeatherViewSet(ViewSet):
+    @method_decorator(log_weather_query)
     @method_decorator(cache_page(60 * 10))
     def list(self, request):
         weather_query_serializer = WeatherQuerySerializer(data=request.query_params)
         if not weather_query_serializer.is_valid():
-            return Response(weather_query_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                weather_query_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
         city = weather_query_serializer.validated_data["city"]
         state = weather_query_serializer.validated_data["state"]
